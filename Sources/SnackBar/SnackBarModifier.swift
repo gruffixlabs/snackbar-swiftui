@@ -19,7 +19,7 @@ struct SnackBarModifier: ViewModifier {
 }
 
 extension View {
-    func snackbar(_ viewModel: SnackBar = .init()) -> some View {
+    public func snackbar(_ viewModel: SnackBar = .init()) -> some View {
         self.modifier(SnackBarModifier(viewModel: viewModel))
     }
 }
@@ -29,7 +29,7 @@ fileprivate struct SnackBarEnvironmentKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var snackbar: SnackBar {
+    public var snackbar: SnackBar {
         get { self[SnackBarEnvironmentKey.self] }
         set { self[SnackBarEnvironmentKey.self] = newValue }
     }

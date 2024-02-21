@@ -16,6 +16,8 @@ import SwiftUI
 @Observable public class SnackBar {
     public var messages = [SnackBarMessage]()
     
+    public init() {}
+    
     public func show(_ text: String, type: SnackBarMessageType = .error, dismissAterSeconds: TimeInterval = 5) {
         withAnimation {
             messages.append(SnackBarMessage(text: text, type: type, dismissAfterSeconds: dismissAterSeconds))
