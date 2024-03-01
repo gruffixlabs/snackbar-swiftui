@@ -30,7 +30,7 @@ public struct SnackBarMessageView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            message.cancelDismissal()
+            snackBar.cancelRemoval(message)
         }
         .padding(.horizontal)
         .foregroundStyle(message.type.foregroundColor)
@@ -42,7 +42,7 @@ public struct SnackBarMessageView: View {
         .gesture(DragGesture()
             .updating($offset) { value, state, _ in
                 state = value.translation
-                message.cancelDismissal()
+                snackBar.cancelRemoval(message)
             }
             .onEnded({ value in
                 if value.translation.height > size.height * 0.25 || abs(value.translation.width) > size.width * 0.33 {
@@ -56,11 +56,18 @@ public struct SnackBarMessageView: View {
                 }
             }
         }
-        .onChange(of: isTopMessage, initial: true, { _, isFirst in
-            if isFirst && message.dismissAfterSeconds > 0 {
-                snackBar.scheduleRemoval(message)
-            }
-        })
+        .onAppear {
+            scheduleRemovalIfNecessary(isFirst: isTopMessage)
+        }
+        .onChange(of: isTopMessage) { isFirst in
+            scheduleRemovalIfNecessary(isFirst: isFirst)
+        }
+    }
+    
+    private func scheduleRemovalIfNecessary(isFirst: Bool) {
+        if isFirst && message.dismissAfterSeconds > 0 {
+            snackBar.scheduleRemoval(message)
+        }
     }
 }
 

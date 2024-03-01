@@ -6,7 +6,7 @@
 
 import Foundation
 
-@Observable public class SnackBarMessage: Identifiable {
+public struct SnackBarMessage: Identifiable, Sendable, Equatable {
     public var id: String
     public var text: String
     public var type: SnackBarMessageType
@@ -17,9 +17,5 @@ import Foundation
         self.text = text
         self.type = type
         self.dismissAfterSeconds = dismissAfterSeconds
-    }
-    
-    public func cancelDismissal() {
-        dismissAfterSeconds = 0
     }
 }

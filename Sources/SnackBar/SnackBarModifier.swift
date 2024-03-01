@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct SnackBarModifier: ViewModifier {
-    var viewModel: SnackBar
+    @ObservedObject var viewModel: SnackBar
     
     func body(content: Content) -> some View {
         ZStack(alignment: .bottom) {

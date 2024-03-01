@@ -9,6 +9,8 @@ import SwiftUI
 struct SnackBarContainer: View {
     @Environment(\.snackbar) private var snackBar
     
+    @State private var messages = [SnackBarMessage]()
+    
     func offset(for message: SnackBarMessage) -> CGSize {
         guard let index = snackBar.messages.firstIndex(where: {$0.id == message.id}), index > 0 else { return .zero }
         let j = min(index, 5) * 5
@@ -17,12 +19,15 @@ struct SnackBarContainer: View {
     
     var body: some View {
         ZStack {
-            ForEach(snackBar.messages.reversed()) { message in
+            ForEach(messages) { message in
                 SnackBarMessageView(message: message)
                     .id(message.id)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .offset(offset(for: message))
             }
+        }
+        .onReceive(snackBar.$messages) {
+            messages = $0.reversed()
         }
     }
 }

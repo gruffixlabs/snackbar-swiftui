@@ -5,6 +5,9 @@
 //
 
 import SwiftUI
+import OSLog
+
+private var logger = Logger(OSLog(subsystem: "com.gruffix.snackbar", category: "snackbar"))
 
 /**
  To use add a .snackbar() modifier to a root view. e.g. on a NavigationStack().
@@ -13,10 +16,18 @@ import SwiftUI
  
  Passing a dismissAfterSeconds of zero keeps the message displayed until a user flicks down, left, or right. Flicking it up keeps it on the screen until the user flicks it off the screen.
  */
-@Observable public class SnackBar {
-    public var messages = [SnackBarMessage]()
+public class SnackBar: ObservableObject {
+    @Published public var messages = [SnackBarMessage]()
+    
+    private var tasks = [SnackBarMessage.ID : Task<Void, Never>]()
     
     public init() {}
+    
+    deinit {
+        tasks.values.forEach { 
+            $0.cancel()
+        }
+    }
     
     public func show(_ text: String, type: SnackBarMessageType = .error, dismissAterSeconds: TimeInterval = 5) {
         withAnimation {
@@ -28,12 +39,28 @@ import SwiftUI
         withAnimation {
             messages.removeAll(where: {$0.id == message.id})
         }
+        cancelRemovalTask(message.id)
+    }
+    
+    private func cancelRemovalTask(_ messageId: SnackBarMessage.ID) {
+        if let task = tasks[messageId] {
+            task.cancel()
+            tasks[messageId] = nil
+        }
+    }
+    
+    public func cancelRemoval(_ message: SnackBarMessage) {
+        cancelRemovalTask(message.id)
     }
     
     func scheduleRemoval(_ message: SnackBarMessage) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + message.dismissAfterSeconds) {
-            if message.dismissAfterSeconds > 0 {
+        tasks[message.id] = Task {
+            do {
+                try await Task.sleep(nanoseconds: UInt64(message.dismissAfterSeconds * 1E9))
                 self.remove(message)
+            } catch is CancellationError {
+            } catch {
+                logger.error("An error occurred while waiting for the snackbar message to be automatically removed: \(error)")
             }
         }
     }
@@ -96,6 +123,6 @@ import SwiftUI
         NavigationStack {
             Shim()
         }
-        .snackbar()
+        .snackbar(SnackBar())
     }
 }

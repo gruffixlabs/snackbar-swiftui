@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-public enum SnackBarMessageType: CaseIterable, CustomStringConvertible, Hashable {
+public enum SnackBarMessageType: CaseIterable, CustomStringConvertible, Hashable, Sendable {
     case error, warning, info
     
     public var backgroundColor: Color {
