@@ -12,6 +12,8 @@ Provides a Snackbar-like notification at the bottom of the user's screen.
 ## Installation
 To use, with Swift Package Manager, add [https://github.com/gruffixlabs/snackbar-swiftui.git](https://github.com/gruffixlabs/snackbar-swiftui.git).
 
+The package supports iOS 15+ and macOS 12+
+
 ## Getting Started
 ```
 import SnackBar

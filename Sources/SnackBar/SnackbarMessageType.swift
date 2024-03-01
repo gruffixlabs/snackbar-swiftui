@@ -9,14 +9,6 @@ import SwiftUI
 public enum SnackBarMessageType: CaseIterable, CustomStringConvertible, Hashable, Sendable {
     case error, warning, info
     
-    public var backgroundColor: Color {
-        switch self {
-        case .error: .red
-        case .warning: .yellow
-        case .info: .blue
-        }
-    }
-    
     public var foregroundColor: Color {
         switch self {
         case .error: .white

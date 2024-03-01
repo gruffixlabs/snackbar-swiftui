@@ -119,10 +119,8 @@ public class SnackBar: ObservableObject {
         }
     }
     
-    return NavigationStack {
-        NavigationStack {
-            Shim()
-        }
-        .snackbar(SnackBar())
+    return NavigationView {
+        Shim()
     }
+    .snackbar(SnackBar())
 }

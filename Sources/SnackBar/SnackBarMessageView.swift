@@ -36,7 +36,8 @@ public struct SnackBarMessageView: View {
         .foregroundStyle(message.type.foregroundColor)
         .padding(.vertical)
         .frame(idealWidth: 325, maxWidth: 325)
-        .background(message.type.backgroundColor.gradient, in: .rect(cornerRadius: 14))
+        .background(MessageBackgroundStyle(messageType: message.type), in: .rect(cornerRadius: 14))
+        
         .clipShape(.rect(cornerRadius: 14))
         .offset(offset)
         .gesture(DragGesture()
@@ -71,3 +72,22 @@ public struct SnackBarMessageView: View {
     }
 }
 
+fileprivate struct MessageBackgroundStyle: ShapeStyle {
+    let messageType: SnackBarMessageType
+    
+    func resolve(in environment: EnvironmentValues) -> AnyShapeStyle {
+        if #available(iOS 16, macOS 13, *) {
+            switch messageType {
+            case .error: return AnyShapeStyle(.red.gradient)
+            case .warning: return AnyShapeStyle(.yellow.gradient)
+            case .info: return AnyShapeStyle(.blue.gradient)
+            }
+        } else {
+            switch messageType {
+            case .error: return AnyShapeStyle(.red)
+            case .warning: return AnyShapeStyle(.yellow)
+            case .info: return AnyShapeStyle(.blue)
+            }
+        }
+    }
+}
